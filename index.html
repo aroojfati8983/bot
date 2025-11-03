@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Med Cahtbot</title>
+</head>
+<body>
+    <h1>Medicine</h1>
+    <form onsubmit="getAnswer(); return false;">
+    <input type="text" name="Medicine" id="Medicine"  placeholder="Enter medicine name">
+    <button type="submit">Get</button>
+    <div id="answer"></div>
+     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function getAnswer(){
+ const MedicineRef=document.querySelector("#Medicine") ;
+ const Medicine=MedicineRef.value;
+ const divRef = document.querySelector("#answer");
+  divRef.innerHTML="<p>............</p>"
+            
+            
+ const res=axios.post(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+    {
+    contents: [
+        {
+          parts: [
+            {
+              "text": `I am A medical information assistant. 
+Answer medical questions in a concise words about diseases, symptoms, medicines, treatments, prevention, and health tips. 
+If asked about something unrelated to medicine, politely redirect to health-related topics.
+Question: ${Medicine}`
+
+            },
+          ],
+        },
+      ],
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": "AIzaSyBLiZRYlmP3ydCHPh3jvl2-BDkXsst6msI", 
+      }
+    }
+);
+res
+.then((data)=>{
+    
+    const answer=data.data.candidates[0].content.parts[0].text;
+    divRef.innerHTML=`<p>${answer}</p>`;
+    console.log(data);
+})
+.catch((error)=>{
+
+    divRef.innerHTML = `<p>Sorry there was an error. Please try again.</p>`; 
+    console.log(error);
+    
+});
+
+}
+    </script>
+    </form>
+</body>
+</html>
